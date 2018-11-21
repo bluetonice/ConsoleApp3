@@ -70,6 +70,7 @@ namespace ConsoleApp3
         public IEnumerable<T> Search<T>(BaseSearchModel request) where T : class
         {
             var dynamicQuery = new List<QueryContainer>();
+
             foreach (var item in request.Fields)
             {
                 dynamicQuery.Add(Query<T>.Match(m => m.Field(new Field(item.Key.ToLower())).Query(item.Value)));
@@ -102,16 +103,21 @@ namespace ConsoleApp3
             }
         }
 
-        public  void SearchByUniqueId<T>(Guid UniqueId) where T : class, IBaseEntity
+        public IEnumerable<T> SearchById<T>(Guid Id) where T : class, IBaseEntity
         {
-            var response = this._elasticClient.Search<T>(s => s.Index(_indexName).Query(q => q
+            var result = this._elasticClient.Search<T>(s => s.Index(_indexName).Query(q => q
 
            .Bool(bq => bq
            .Filter(fq => fq
-           .Term(t => t.Field(f => f.Id).Value(UniqueId)
+           .Term(t => t.Field(f => f.Id).Value(Id)
             )))));
 
-         
+            if (!result.IsValid)
+            {
+                throw new Exception(result.OriginalException.Message);
+            }
+
+            return result.Documents;
         }
 
         private void CheckIndex<T>() where T : class

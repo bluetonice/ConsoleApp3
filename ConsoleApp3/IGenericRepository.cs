@@ -13,6 +13,6 @@ namespace ConsoleApp3
         IEnumerable<T> All<T>() where T : class;
         IEnumerable<T> Search<T>(BaseSearchModel search) where T : class;
 
-        void SearchByUniqueId<T>(Guid UniqueId) where T : class, IBaseEntity;
+        IEnumerable<T> SearchById<T>(Guid UniqueId) where T : class, IBaseEntity;
     }
 }
