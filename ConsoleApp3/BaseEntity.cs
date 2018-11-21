@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Nest;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
@@ -11,6 +12,9 @@ namespace ConsoleApp3
     }
     public abstract class BaseEntity:IBaseEntity
     {
+
+        [Keyword]
+
         public Guid Id { get; set; }
     }
 

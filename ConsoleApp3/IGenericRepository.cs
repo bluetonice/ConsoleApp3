@@ -12,5 +12,7 @@ namespace ConsoleApp3
         bool Delete<T>(Guid id) where T : class;
         IEnumerable<T> All<T>() where T : class;
         IEnumerable<T> Search<T>(BaseSearchModel search) where T : class;
+
+        void SearchByUniqueId<T>(Guid UniqueId) where T : class, IBaseEntity;
     }
 }

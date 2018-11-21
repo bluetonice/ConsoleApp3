@@ -89,6 +89,30 @@ namespace ConsoleApp3
             return result.Documents;
         }
 
+        public void DeleteIndex() 
+        {
+            if (_elasticClient.IndexExists(_indexName).Exists)
+            {
+                var result = _elasticClient.DeleteIndex(_indexName);
+
+                if (!result.IsValid)
+                {
+                    throw new Exception(result.OriginalException.Message);
+                }
+            }
+        }
+
+        public  void SearchByUniqueId<T>(Guid UniqueId) where T : class, IBaseEntity
+        {
+            var response = this._elasticClient.Search<T>(s => s.Index(_indexName).Query(q => q
+
+           .Bool(bq => bq
+           .Filter(fq => fq
+           .Term(t => t.Field(f => f.Id).Value(UniqueId)
+            )))));
+
+         
+        }
 
         private void CheckIndex<T>() where T : class
         {

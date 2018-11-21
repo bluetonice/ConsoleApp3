@@ -11,7 +11,66 @@ namespace ConsoleApp3
     {
         static void Main(string[] args)
         {
-            GenericRepository genericRepository = new GenericRepository("healthchecktestlog");
+            try
+            {
+                GenericRepository client = new GenericRepository("healthchecktestlog");
+
+                client.DeleteIndex();
+
+                var now = DateTime.Now;
+                HealthCheckTestLog doc = new HealthCheckTestLog();
+                doc.TestPropertyDatetime = now;
+                doc.TestPropertyDecimal = 12.5M;
+                doc.TestPropertyInteger = 8;
+                doc.TestPropertyString = "this is a string";
+
+                client.Save(doc);
+
+                var createDocument = client.Get<HealthCheckTestLog>(doc.Id);
+
+                if (createDocument.Id != doc.Id
+                    || createDocument.TestPropertyDatetime != doc.TestPropertyDatetime
+                    || createDocument.TestPropertyDecimal != doc.TestPropertyDecimal
+                    || createDocument.TestPropertyInteger != doc.TestPropertyInteger
+                    || createDocument.TestPropertyString != doc.TestPropertyString)
+                {
+                    throw new Exception("Create");
+                }
+
+                doc.TestPropertyInteger = 1;
+
+                client.Update(doc);
+
+
+                var updatedDocument = client.Get<HealthCheckTestLog>(doc.Id);
+
+
+                if (updatedDocument.Id != doc.Id || updatedDocument.TestPropertyInteger != 1)
+                {
+                    throw new Exception("Update");
+                }
+
+                client.Delete<HealthCheckTestLog>(doc.Id);
+
+                BaseSearchModel baseSearchModel = new BaseSearchModel();
+                baseSearchModel.From = 0;
+                baseSearchModel.Size = 100;
+                baseSearchModel.Fields = new Dictionary<string, string>();
+                baseSearchModel.Fields.Add("Id", doc.Id.ToString());
+
+                IEnumerable<HealthCheckTestLog> deleteDocument = client.Search<HealthCheckTestLog>(baseSearchModel);
+
+                client.SearchByUniqueId<HealthCheckTestLog>(doc.Id);
+
+            }
+            catch (Exception ex)
+            {
+
+                //return HealthCheckResult.Unhealthy($"ElasticSearchCheck({name}): Exception during check: {ex.GetType().FullName}");
+            }
+
+
+
         }
 
         //private static void Old()

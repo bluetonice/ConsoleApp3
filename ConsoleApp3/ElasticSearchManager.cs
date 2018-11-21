@@ -124,7 +124,7 @@ namespace ConsoleApp3
 
         public ElasticResponse Delete<T>(string documentId) where T : class, IElasticDocument
         {
-            var response = client.Delete<HealthCheckTestLog>(documentId, d => d.Index(defaultIndex));
+            var response = client.Delete<T>(documentId, d => d.Index(defaultIndex));
 
 
             return new ElasticResponse()
